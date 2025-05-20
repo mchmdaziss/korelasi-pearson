@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>korelasi pearson</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 p-6 font-sans">
+  <div class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+    <h1 class="text-2xl font-bold text-center text-blue-700 mb-6">KORELASI PEARSON</h1>
+<h4 class="text-xl font-semibold text-center text-blue-700 mb-6">(materi bu ema)</h4>
+
+<label class="block mb-2 font-semibold">masukkan data x:</label>
+    <input id="inputX" type="text" placeholder="1,2,3,4,5" class="w-full mb-4 p-2 border rounded" /><label class="block mb-2 font-semibold">masukkan data y:</label>
+<input id="inputY" type="text" placeholder="1,2,3,4,5" class="w-full mb-4 p-2 border rounded" />
+
+<label class="text-xl font-bold text-center text-blue-700 mb-6">untuk bilangan koma gunakan (./titik) 🤓</label>
+
+<button onclick="hitungKorelasi()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mb-6">
+  klik jika ingin tau jawabannya 🤯
+</button>
+
+<h2 class="text-xl font-bold text-center text-blue-700 mb-6">insyaallah azis dan alan sudah menyempurnakannya 😇</h2>
+
+<h3 class="text-xl font-bold text-center text-blue-700 mb-6">kalo merasa belum yakin dgn jawabannya boleh dicek manual yaa, karena didunia ini tidak ada yang sempurna kecuali الله ta'ala</h3>
+
+<h5 class="text-xl font-bold text-center text-blue-700 mb-6">Meta AI "Sholat adalah kunci pembuka pintu kebahagiaan dan ketenangan jiwa."</h5>
+
+<h5 class="text-xl font-bold text-center text-blue-700 mb-6">Kalimat ini memotivasi karena menekankan manfaat spiritual yang bisa diperoleh dari sholat, yaitu kebahagiaan dan ketenangan jiwa. Ini bisa menjadi pengingat bahwa sholat bukan hanya kewajiban, tapi juga sumber kekuatan dan ketenangan dalam hidup."</h5>
+
+<div id="tabelOutput" class="overflow-x-auto text-sm mb-6"></div>
+<pre id="output" class="bg-gray-100 p-4 rounded overflow-x-auto text-sm font-mono"></pre>
+
+  </div>  <script>
+    function hitungKorelasi() {
+      const x = document.getElementById("inputX").value.split(',').map(Number);
+      const y = document.getElementById("inputY").value.split(',').map(Number);
+      const n = x.length;
+
+      if (x.length !== y.length || x.includes(NaN) || y.includes(NaN)) {
+        document.getElementById("output").innerText = "Data tidak valid. Jumlah data x dan y harus sama dan hanya angka.";
+        return;
+      }
+
+      const xy = x.map((val, i) => val * y[i]);
+      const x2 = x.map(val => val * val);
+      const y2 = y.map(val => val * val);
+
+      const sumX = x.reduce((a,b) => a + b, 0);
+      const sumY = y.reduce((a,b) => a + b, 0);
+      const sumXY = xy.reduce((a,b) => a + b, 0);
+      const sumX2 = x2.reduce((a,b) => a + b, 0);
+      const sumY2 = y2.reduce((a,b) => a + b, 0);
+
+      const xBar = sumX / n;
+      const yBar = sumY / n;
+
+      const SSxy = sumXY - n * xBar * yBar;
+      const SSx2 = sumX2 - n * xBar * xBar;
+      const SSy2 = sumY2 - n * yBar * yBar;
+
+      const r = SSxy / Math.sqrt(SSx2 * SSy2);
+
+      let interpretasi = "";
+      const absR = Math.abs(r);
+      if (absR === 1) interpretasi = "Korelasi sempurna";
+      else if (absR >= 0.8) interpretasi = "Korelasi sangat kuat";
+      else if (absR >= 0.6) interpretasi = "Korelasi kuat";
+      else if (absR >= 0.4) interpretasi = "Korelasi sedang";
+      else if (absR >= 0.2) interpretasi = "Korelasi lemah";
+      else interpretasi = "Tidak ada atau korelasi sangat lemah";
+
+      let tabelHTML = '<table class="table-auto w-full border mb-4">';
+      tabelHTML += '<thead><tr class="bg-gray-200">'
+        + '<th class="border px-2 py-1">x</th>'
+        + '<th class="border px-2 py-1">y</th>'
+        + '<th class="border px-2 py-1">xy</th>'
+        + '<th class="border px-2 py-1">x²</th>'
+        + '<th class="border px-2 py-1">y²</th>'
+        + '</tr></thead><tbody>';
+
+      for (let i = 0; i < n; i++) {
+        tabelHTML += `<tr class="text-center">
+          <td class="border px-2 py-1">${x[i]}</td>
+          <td class="border px-2 py-1">${y[i]}</td>
+          <td class="border px-2 py-1">${xy[i]}</td>
+          <td class="border px-2 py-1">${x2[i]}</td>
+          <td class="border px-2 py-1">${y2[i]}</td>
+        </tr>`;
+      }
+
+      tabelHTML += `<tr class="font-semibold text-center bg-gray-100">
+        <td class="border px-2 py-1">Σx=${sumX}</td>
+        <td class="border px-2 py-1">Σy=${sumY}</td>
+        <td class="border px-2 py-1">Σxy=${sumXY}</td>
+        <td class="border px-2 py-1">Σx²=${sumX2}</td>
+        <td class="border px-2 py-1">Σy²=${sumY2}</td>
+      </tr>`;
+      tabelHTML += '</tbody></table>';
+
+      document.getElementById("tabelOutput").innerHTML = tabelHTML;
+
+      const xyBar = (xBar * yBar).toFixed(2);
+      const nxyBar = (n * xBar * yBar).toFixed(2);
+      const xBar2 = (xBar * xBar).toFixed(2);
+      const yBar2 = (yBar * yBar).toFixed(2);
+      const nxBar2 = (n * xBar * xBar).toFixed(2);
+      const nyBar2 = (n * yBar * yBar).toFixed(2);
+
+      let output = "=== LANGKAH-LANGKAH KORELASI PEARSON ===\n\n";
+
+output += `1. Rata-rata:\n`;
+output += `   x̄ = Σx / n = ${sumX} / ${n} = ${xBar.toFixed(2)}\n`;
+output += `   ȳ = Σy / n = ${sumY} / ${n} = ${yBar.toFixed(2)}\n\n`;
+
+output += `2. Menghitung SSxy:\n`;
+output += `   SSxy = Σxy − n(x̄ × ȳ)\n`;
+output += `        = ${sumXY} − ${n}(${xBar.toFixed(2)} × ${yBar.toFixed(2)})\n`;
+output += `        = ${sumXY} − ${(n * xBar * yBar).toFixed(2)}\n`;
+output += `        = ${SSxy.toFixed(2)}\n\n`;
+
+output += `3. Menghitung SSx² dan SSy²:\n`;
+      output += `  SSx² = Σx² − n(x̄²)\n`;
+      output += `       = ${sumX2} − ${n}(${xBar.toFixed(2)}²)\n`;
+      output += `       = ${sumX2} − ${n}(${xBar2})\n`;
+      output += `       = ${sumX2} − ${nxBar2}\n`;
+      output += `       = ${SSx2.toFixed(2)}\n\n`;
+
+      output += `  SSy² = Σy² − n(ȳ²)\n`;
+      output += `       = ${sumY2} − ${n}(${yBar.toFixed(2)}²)\n`;
+      output += `       = ${sumY2} − ${n}(${yBar2})\n`;
+      output += `       = ${sumY2} − ${nyBar2}\n`;
+      output += `       = ${SSy2.toFixed(2)}\n\n`;
+
+output += `4. Menghitung koefisien korelasi r:\n`;
+output += `   r = SSxy / √(SSx² × SSy²)\n`;
+output += `     = ${SSxy.toFixed(2)} / √(${SSx2.toFixed(2)} × ${SSy2.toFixed(2)})\n`;
+output += `     = ${SSxy.toFixed(2)} / √(${(SSx2 * SSy2).toFixed(4)})\n`;
+output += `     = ${SSxy.toFixed(2)} / ${Math.sqrt(SSx2 * SSy2).toFixed(4)}\n`;
+output += `     = ${r.toFixed(4)}\n\n`;
+
+output += `5. Interpretasi korelasi:\n`;
+output += `   ${interpretasi}\n\n`;
+
+const r2 = r * r;
+const r2persen = r2 * 100;
+
+output += `6. Koefisien determinasi (r²):\n`;
+output += `   r² = r × r = ${r.toFixed(4)} × ${r.toFixed(4)} = ${r2.toFixed(4)}\n\n`;
+
+output += `7. Koefisien determinasi dalam persen:\n`;
+output += `   R² = ${r2.toFixed(4)} × 100% = ${r2persen.toFixed(2)}%\n`;
+
+      document.getElementById("output").innerText = output;
+    }
+  </script></body>
+</html>
